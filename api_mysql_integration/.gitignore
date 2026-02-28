@@ -1,0 +1,14 @@
+# Dependency directories
+node_modules/
+dist/
+oh-my-zsh/
+
+# Environment files
+.env
+
+# IDE folders
+.vscode/
+.idea/
+
+# Logs
+npm-debug.log*
