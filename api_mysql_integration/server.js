@@ -9,34 +9,40 @@ const app = express();
 app.use(cors()); 
 app.use(express.json());
 
-// 1. Database Connection
-const db = mysql.createConnection({
+// 1. FIXED Database Connection for Cloud
+// This tells the app: "Use the Railway URL if available, otherwise use localhost"
+const db = mysql.createConnection(process.env.MYSQL_URL || {
   host: 'localhost',
-  user: 'root',      
-  password: '',      
+  user: 'root',
+  password: '',
   database: 'mental_health_db' 
 });
 
 db.connect(err => {
-  if (err) console.error('Database connection failed:', err);
-  else console.log('Connected to MySQL Database');
+  if (err) {
+    console.error('❌ Database connection failed:', err);
+  } else {
+    console.log('✅ Connected to MySQL Database!');
+  }
 });
 
-// 2. The Mood Endpoint
-app.post('/mood', (req, res) => {
+// 2. The Mood Endpoint (Same as before)
+app.post('/api/mood', (req, res) => { // Added /api/ to match your frontend baseURL
   const { full_name, mood_text } = req.body;
-
   const query = 'INSERT INTO mood_entries (full_name, mood_text) VALUES (?, ?)';
+  
   db.query(query, [full_name, mood_text], (err, result) => {
-    if (err) return res.status(500).json({ error: 'Database error' });
-
-    // AI Advisor Logic
-    const ai_message = `Hi ${full_name}, I've recorded your feeling of '${mood_text}' in the database. Take a deep breath!`;
-
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+    const ai_message = `Hi ${full_name}, I've recorded your feeling of '${mood_text}'. Take a deep breath!`;
     res.json({ ai_message });
   });
 });
 
-app.listen(3000, () => {
-  console.log('🚀 Backend running at http://localhost:3000');
+// 3. FIXED Port for Railway
+const PORT = process.env.PORT || 3000; 
+app.listen(PORT, () => {
+  console.log(`🚀 Backend running on port ${PORT}`);
 });
