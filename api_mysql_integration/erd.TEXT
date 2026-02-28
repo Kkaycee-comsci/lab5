@@ -1,0 +1,18 @@
+USERS (Parent Table)
++----+----------------------+
+| id | full_name            | <--- Primary Key
++----+----------------------+
+       |
+       | (One-to-Many: One user can have many moods)
+       v
+MOOD_ENTRIES
++----+---------+------------------------------+
+| id | user_id | mood_text                    | <--- user_id is Foreign Key
++----+---------+------------------------------+
+       |
+       | (One-to-One/Many: Each mood gets an AI response)
+       v
+AI_RESPONSES
++----+---------------+-------------------------+
+| id | mood_entry_id | ai_message              | <--- mood_entry_id is Foreign Key
++----+---------------+-------------------------+
