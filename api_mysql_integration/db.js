@@ -1,12 +1,19 @@
-import mysql from "mysql2/promise";
+const mysql = require('mysql2');
 
-// Hardcoded for XAMPP defaults to ensure it works right now
-export const db = await mysql.createPool({
-  host: "127.0.0.1",
-  user: "root",
-  password: "", 
-  database: "mood_tracker_db",
-  port: 3306
+// This uses the Cloud URL from Railway/Render, or defaults to local for your PC
+const connection = mysql.createConnection(process.env.MYSQL_URL || {
+    host: 'localhost',
+    user: 'root',
+    password: 'your_local_password',
+    database: 'mental_health_db'
 });
 
-console.log("Database pool created with user: root");
+connection.connect(err => {
+    if (err) {
+        console.error('❌ Database connection failed:', err.stack);
+        return;
+    }
+    console.log('✅ Connected to the database!');
+});
+
+module.exports = connection;

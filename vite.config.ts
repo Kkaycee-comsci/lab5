@@ -6,6 +6,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/lab5/', // 👈 ADD THIS LINE (Must match your repo name)
   plugins: [
     vue(),
     vueDevTools(),
