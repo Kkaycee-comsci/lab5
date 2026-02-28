@@ -11,13 +11,13 @@ app.use(express.json());
 
 // 1. FIXED Database Connection for Cloud
 // This tells the app: "Use the Railway URL if available, otherwise use localhost"
+// This forces the app to use the Render Environment Variable first
 const db = mysql.createConnection(process.env.MYSQL_URL || {
   host: 'localhost',
   user: 'root',
   password: '',
   database: 'mental_health_db' 
 });
-
 db.connect(err => {
   if (err) {
     console.error('❌ Database connection failed:', err);
