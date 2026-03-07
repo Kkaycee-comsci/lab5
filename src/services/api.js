@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-  // Ensure it has https:// and ends with /api
-  baseURL: 'https://mental-health-api-fkhi.onrender.com/api', 
+  // Just the base URL
+  baseURL: 'https://mental-health-api-fkhi.onrender.com', 
   headers: {
     'Content-Type': 'application/json'
   }

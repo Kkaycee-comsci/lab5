@@ -6,18 +6,24 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-app.use(cors()); 
+
+// 1. IMPROVED CORS SETTINGS (Moved to the top)
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+})); 
+
 app.use(express.json());
 
-// 1. FIXED Database Connection for Cloud
-// This tells the app: "Use the Railway URL if available, otherwise use localhost"
-// This forces the app to use the Render Environment Variable first
+// 2. Database Connection
 const db = mysql.createConnection(process.env.MYSQL_URL || {
   host: 'localhost',
   user: 'root',
   password: '',
   database: 'mental_health_db' 
 });
+
 db.connect(err => {
   if (err) {
     console.error('❌ Database connection failed:', err);
@@ -26,22 +32,22 @@ db.connect(err => {
   }
 });
 
-// 2. The Mood Endpoint (Same as before)
-app.post('/api/mood', (req, res) => { // Added /api/ to match your frontend baseURL
+// 3. The Mood Endpoint
+app.post('/api/mood', (req, res) => {
   const { full_name, mood_text } = req.body;
   const query = 'INSERT INTO mood_entries (full_name, mood_text) VALUES (?, ?)';
   
   db.query(query, [full_name, mood_text], (err, result) => {
     if (err) {
       console.error(err);
-      return res.status(500).json({ error: 'Database error' });
+      return res.status(500).json({ error: 'Database error', details: err.message });
     }
     const ai_message = `Hi ${full_name}, I've recorded your feeling of '${mood_text}'. Take a deep breath!`;
     res.json({ ai_message });
   });
 });
 
-// 3. FIXED Port for Railway
+// 4. Port Configuration
 const PORT = process.env.PORT || 3000; 
 app.listen(PORT, () => {
   console.log(`🚀 Backend running on port ${PORT}`);
